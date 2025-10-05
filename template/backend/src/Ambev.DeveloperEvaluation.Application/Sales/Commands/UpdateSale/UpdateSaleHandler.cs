@@ -2,6 +2,7 @@ using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Specifications;
 using AutoMapper;
 using MediatR;
 
@@ -12,21 +13,31 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
     private readonly ISaleRepository _saleRepository;
     private readonly IPublisher _publisher;
     private readonly IMapper _mapper;
+    private readonly DiscountSpecification _discountSpecification;
 
     public UpdateSaleHandler(ISaleRepository saleRepository, IPublisher publisher, IMapper mapper)
     {
         _saleRepository = saleRepository;
         _publisher = publisher;
         _mapper = mapper;
+        _discountSpecification = new DiscountSpecification();
     }
 
     public async Task<UpdateSaleResult> Handle(UpdateSaleCommand request, CancellationToken cancellationToken)
     {
-        var sale = await _saleRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException(nameof(Sale), request.Id);
+        var sale = await _saleRepository.GetByIdAsync(request.Id);
+        
+        if (sale == null)
+            throw new NotFoundException(nameof(Sale), request.Id);
+
+        sale.SaleNumber = request.SaleNumber;
         sale.CustomerName = request.CustomerName;
         sale.BranchName = request.BranchName;
 
-        var itemsToRemove = sale.Items.Where(i => !request.Items.Any(dto => dto.Id == i.Id)).ToList();
+        var itemsToRemove = sale.Items
+           .Where(i => !request.Items.Any(dto => dto.Id == i.Id))
+           .ToList();
+
         foreach (var item in itemsToRemove)
         {
             sale.Items.Remove(item);
@@ -34,26 +45,16 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
 
         foreach (var itemDto in request.Items)
         {
-            decimal discount = 0;
-            if (itemDto.Quantity >= 10)
-            {
-                discount = 0.20m;
-            }
-            else if (itemDto.Quantity >= 4)
-            {
-                discount = 0.10m;
-            }
-
-            var itemTotal = itemDto.Quantity * itemDto.UnitPrice * (1 - discount);
-
             var existingItem = sale.Items.FirstOrDefault(i => i.Id == itemDto.Id);
+
             if (existingItem != null)
             {
                 existingItem.ProductId = itemDto.ProductId;
                 existingItem.Quantity = itemDto.Quantity;
                 existingItem.UnitPrice = itemDto.UnitPrice;
-                existingItem.Discount = discount;
-                existingItem.TotalValue = itemTotal;
+
+                existingItem.Discount = _discountSpecification.GetDiscount(existingItem);
+                existingItem.TotalValue = existingItem.Quantity * existingItem.UnitPrice * (1 - existingItem.Discount);
             }
         }
 
@@ -63,8 +64,6 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
 
         await _publisher.Publish(new SaleModifiedEvent(sale), cancellationToken);
 
-        var result = _mapper.Map<UpdateSaleResult>(updatedSale);
-
-        return result;
+        return _mapper.Map<UpdateSaleResult>(updatedSale);
     }
 }

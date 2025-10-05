@@ -25,7 +25,7 @@ public class SaleRepository : ISaleRepository
         return await _context.Sales.Include(s => s.Items).AsNoTracking().ToListAsync();
     }
 
-    public async Task<Sale> GetByIdAsync(Guid id)
+    public async Task<Sale?> GetByIdAsync(Guid id)
     {
         return await _context.Sales.Include(s => s.Items).FirstOrDefaultAsync(s => s.Id == id);
     }

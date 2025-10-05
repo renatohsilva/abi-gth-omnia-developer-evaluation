@@ -1,4 +1,3 @@
-using Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductById;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using MediatR;

@@ -2,6 +2,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSaleFeature;
 
 public class UpdateSaleRequest
 {
+    public int SaleNumber { get; set; } = 0;
     public string CustomerName { get; set; } = string.Empty;
     public string BranchName { get; set; } = string.Empty;
     public List<UpdateSaleItemRequest> Items { get; set; } = [];

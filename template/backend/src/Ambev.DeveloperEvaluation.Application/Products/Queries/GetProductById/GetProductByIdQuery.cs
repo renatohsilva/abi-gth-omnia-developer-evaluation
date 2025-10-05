@@ -1,4 +1,3 @@
-using Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductById;
 using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProductById;

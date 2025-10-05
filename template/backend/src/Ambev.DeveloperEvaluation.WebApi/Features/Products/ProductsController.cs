@@ -5,12 +5,14 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProductByIdFeature;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetAllProductsFeature;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ProductsController : ControllerBase
 {
     private readonly IMediator _mediator;

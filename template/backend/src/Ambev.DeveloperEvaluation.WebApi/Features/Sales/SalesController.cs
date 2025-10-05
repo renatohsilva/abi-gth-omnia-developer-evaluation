@@ -13,12 +13,14 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSaleFeature;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSaleItemFeature;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class SalesController : ControllerBase
 {
     private readonly IMediator _mediator;

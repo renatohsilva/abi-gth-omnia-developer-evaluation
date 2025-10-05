@@ -1,4 +1,3 @@
-using Ambev.DeveloperEvaluation.Application.Sales.Commands.CreateSale;
 using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.UpdateSale;

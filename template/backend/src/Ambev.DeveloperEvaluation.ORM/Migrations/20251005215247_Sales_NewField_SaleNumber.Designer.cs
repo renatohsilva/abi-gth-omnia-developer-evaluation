@@ -3,6 +3,7 @@ using System;
 using Ambev.DeveloperEvaluation.ORM;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ambev.DeveloperEvaluation.ORM.Migrations;
 
 [DbContext(typeof(DefaultContext))]
-partial class DefaultContextModelSnapshot : ModelSnapshot
+[Migration("20251005215247_Sales_NewField_SaleNumber")]
+partial class Sales_NewField_SaleNumber
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder
@@ -21,28 +24,6 @@ partial class DefaultContextModelSnapshot : ModelSnapshot
             .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-        modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.EventLog", b =>
-            {
-                b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uuid");
-
-                b.Property<string>("EventData")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.Property<string>("EventType")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.Property<DateTime>("Timestamp")
-                    .HasColumnType("timestamp with time zone");
-
-                b.HasKey("Id");
-
-                b.ToTable("EventLogs");
-            });
 
         modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Product", b =>
             {

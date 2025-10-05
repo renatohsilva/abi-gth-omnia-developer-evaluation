@@ -5,6 +5,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.UpdateSale;
 public class UpdateSaleCommand : IRequest<UpdateSaleResult>
 {
     public Guid Id { get; set; }
+    public int SaleNumber { get; set; } = 0;
     public string CustomerName { get; set; } = string.Empty;
     public string BranchName { get; set; } = string.Empty;
     public List<UpdateSaleItemCommand> Items { get; set; } = [];

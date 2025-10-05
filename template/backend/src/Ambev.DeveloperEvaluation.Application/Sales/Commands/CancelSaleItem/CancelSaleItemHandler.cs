@@ -21,16 +21,12 @@ public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, Unit
         var sale = await _saleRepository.GetByIdAsync(request.SaleId);
 
         if (sale == null)
-        {
             throw new NotFoundException(nameof(sale), request.SaleId);
-        }
 
         var itemToCancel = sale.Items.FirstOrDefault(i => i.Id == request.SaleItemId);
 
         if (itemToCancel == null)
-        {
             throw new NotFoundException("SaleItem", request.SaleItemId);
-        }
 
         itemToCancel.IsCancelled = true;
 

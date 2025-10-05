@@ -1,13 +1,20 @@
-using Ambev.DeveloperEvaluation.Application.Sales.Commands.CreateSale;
 using MediatR;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.UpdateSale
+namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.UpdateSale;
+
+public class UpdateSaleCommand : IRequest<UpdateSaleResult>
 {
-    public class UpdateSaleCommand : IRequest<Unit>
-    {
-        public Guid Id { get; set; }
-        public string CustomerName { get; set; }
-        public string BranchName { get; set; }
-        public List<SaleItemDto> Items { get; set; } = new List<SaleItemDto>();
-    }
+    public Guid Id { get; set; }
+    public string CustomerName { get; set; } = string.Empty;
+    public string BranchName { get; set; } = string.Empty;
+    public List<UpdateSaleItemCommand> Items { get; set; } = [];
+}
+
+public class UpdateSaleItemCommand
+{
+    public Guid Id { get; set; }
+    public Guid ProductId { get; set; }
+    public int Quantity { get; set; }
+    public decimal UnitPrice { get; set; }
+    public decimal Discount { get; set; }
 }

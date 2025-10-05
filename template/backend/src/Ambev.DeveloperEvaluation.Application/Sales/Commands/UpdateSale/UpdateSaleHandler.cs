@@ -37,7 +37,18 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.UpdateSale
 
             foreach (var itemDto in request.Items)
             {
-                var itemTotal = itemDto.Quantity * itemDto.UnitPrice * (1 - itemDto.Discount);
+                decimal discount = 0;
+                if (itemDto.Quantity >= 10)
+                {
+                    discount = 0.20m;
+                }
+                else if (itemDto.Quantity >= 4)
+                {
+                    discount = 0.10m;
+                }
+
+                var itemTotal = itemDto.Quantity * itemDto.UnitPrice * (1 - discount);
+
                 if (itemDto.Id.HasValue)
                 {
                     var existingItem = sale.Items.FirstOrDefault(i => i.Id == itemDto.Id.Value);
@@ -47,7 +58,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.UpdateSale
                         existingItem.ProductName = itemDto.ProductName;
                         existingItem.Quantity = itemDto.Quantity;
                         existingItem.UnitPrice = itemDto.UnitPrice;
-                        existingItem.Discount = itemDto.Discount;
+                        existingItem.Discount = discount;
                         existingItem.TotalValue = itemTotal;
                     }
                 }
@@ -59,7 +70,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.UpdateSale
                         ProductName = itemDto.ProductName,
                         Quantity = itemDto.Quantity,
                         UnitPrice = itemDto.UnitPrice,
-                        Discount = itemDto.Discount,
+                        Discount = discount,
                         TotalValue = itemTotal,
                         IsCancelled = false
                     };

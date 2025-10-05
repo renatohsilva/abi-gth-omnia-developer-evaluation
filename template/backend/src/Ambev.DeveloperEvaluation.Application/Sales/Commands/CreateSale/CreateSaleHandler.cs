@@ -30,14 +30,24 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.CreateSale
 
             foreach (var itemDto in request.Items)
             {
-                var itemTotal = itemDto.Quantity * itemDto.UnitPrice * (1 - itemDto.Discount);
+                decimal discount = 0;
+                if (itemDto.Quantity >= 10)
+                {
+                    discount = 0.20m;
+                }
+                else if (itemDto.Quantity >= 4)
+                {
+                    discount = 0.10m;
+                }
+
+                var itemTotal = itemDto.Quantity * itemDto.UnitPrice * (1 - discount);
                 var saleItem = new SaleItem
                 {
                     ProductId = itemDto.ProductId,
                     ProductName = itemDto.ProductName,
                     Quantity = itemDto.Quantity,
                     UnitPrice = itemDto.UnitPrice,
-                    Discount = itemDto.Discount,
+                    Discount = discount,
                     TotalValue = itemTotal,
                     IsCancelled = false
                 };

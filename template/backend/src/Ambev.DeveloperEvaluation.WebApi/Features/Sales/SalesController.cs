@@ -4,74 +4,130 @@ using Ambev.DeveloperEvaluation.Application.Sales.Commands.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.Commands.UpdateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.Queries.GetAllSales;
 using Ambev.DeveloperEvaluation.Application.Sales.Queries.GetSaleById;
-using Ambev.DeveloperEvaluation.Application.Sales.ViewModels;
-using Ambev.DeveloperEvaluation.WebApi.Features.Sales.Models;
+using Ambev.DeveloperEvaluation.WebApi.Common;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSaleFeature;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSaleFeature;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSaleByIdFeature;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetAllSalesFeature;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
+
+[Route("api/[controller]")]
+[ApiController]
+public class SalesController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SalesController : ControllerBase
+    private readonly IMediator _mediator;
+    private readonly IMapper _mapper;
+
+    public SalesController(IMediator mediator, IMapper mapper)
     {
-        private readonly IMediator _mediator;
-        private readonly IMapper _mapper;
+        _mediator = mediator;
+        _mapper = mapper;
+    }
 
-        public SalesController(IMediator mediator, IMapper mapper)
-        {
-            _mediator = mediator;
-            _mapper = mapper;
-        }
+    [HttpGet]
+    [ProducesResponseType(typeof(ApiResponseWithData<IEnumerable<GetAllSalesResponse>>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllSales(CancellationToken cancellationToken)
+    {
+        var query = new GetAllSalesQuery();
+        var response = await _mediator.Send(query, cancellationToken);
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<SaleViewModel>>> GetAllSales()
+        return Ok(new ApiResponseWithData<IEnumerable<GetAllSalesResponse>>
         {
-            var query = new GetAllSalesQuery();
-            var result = await _mediator.Send(query);
-            return Ok(result);
-        }
+            Success = true,
+            Message = "Sales retrieved successfully",
+            Data = _mapper.Map<IEnumerable<GetAllSalesResponse>>(response)
+        });
+    }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SaleViewModel>> GetSaleById(Guid id)
-        {
-            var query = new GetSaleByIdQuery(id);
-            var result = await _mediator.Send(query);
-            return result != null ? Ok(result) : NotFound();
-        }
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(ApiResponseWithData<GetSaleByIdResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetSaleById([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var request = new GetSaleByIdRequest { Id = id };
+        var validator = new GetSaleByIdRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-        [HttpPost]
-        public async Task<ActionResult<Guid>> CreateSale([FromBody] CreateSaleRequest request)
-        {
-            var command = _mapper.Map<CreateSaleCommand>(request);
-            var saleId = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetSaleById), new { id = saleId }, saleId);
-        }
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateSale(Guid id, [FromBody] UpdateSaleRequest request)
-        {
-            var command = _mapper.Map<UpdateSaleCommand>(request);
-            command.Id = id;
-            await _mediator.Send(command);
-            return NoContent();
-        }
+        var query = new GetSaleByIdQuery(request.Id);
+        var response = await _mediator.Send(query, cancellationToken);
 
-        [HttpDelete("{id}/cancel")]
-        public async Task<IActionResult> CancelSale(Guid id)
-        {
-            var command = new CancelSaleCommand(id);
-            await _mediator.Send(command);
-            return NoContent();
-        }
+        if (response == null)
+            return NotFound(new ApiResponse { Success = false, Message = "Sale not found" });
 
-        [HttpDelete("{id}/items/{itemId}/cancel")]
-        public async Task<IActionResult> CancelSaleItem(Guid id, Guid itemId)
+        return Ok(new ApiResponseWithData<GetSaleByIdResponse>
         {
-            var command = new CancelSaleItemCommand(id, itemId);
-            await _mediator.Send(command);
-            return NoContent();
-        }
+            Success = true,
+            Message = "Sale retrieved successfully",
+            Data = _mapper.Map<GetSaleByIdResponse>(response)
+        });
+    }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(ApiResponseWithData<CreateSaleResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<UpdateSaleResponse>> CreateSale([FromBody] CreateSaleRequest request, CancellationToken cancellationToken)
+    {
+        var validator = new CreateSaleRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<CreateSaleCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Created(string.Empty, new ApiResponseWithData<CreateSaleResponse>
+        {
+            Success = true,
+            Message = "Sale created successfully",
+            Data = _mapper.Map<CreateSaleResponse>(response)
+        });
+    }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(ApiResponseWithData<UpdateSaleResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateSale(Guid id, [FromBody] UpdateSaleRequest request, CancellationToken cancellationToken)
+    {
+        var validator = new UpdateSaleRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<UpdateSaleCommand>(request);
+        command.Id = id;
+        var response = await _mediator.Send(command, cancellationToken);
+    
+        return Ok(new ApiResponseWithData<CreateSaleResponse>
+        {
+            Success = true,
+            Message = "Sale updated successfully",
+            Data = _mapper.Map<CreateSaleResponse>(response)
+        });
+    }
+
+    [HttpDelete("{id}/cancel")]
+    public async Task<IActionResult> CancelSale(Guid id)
+    {
+        var command = new CancelSaleCommand(id);
+        await _mediator.Send(command);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}/items/{itemId}/cancel")]
+    public async Task<IActionResult> CancelSaleItem(Guid id, Guid itemId)
+    {
+        var command = new CancelSaleItemCommand(id, itemId);
+        await _mediator.Send(command);
+        return NoContent();
     }
 }

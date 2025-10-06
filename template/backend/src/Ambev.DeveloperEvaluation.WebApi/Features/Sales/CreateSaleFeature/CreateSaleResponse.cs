@@ -1,27 +1,24 @@
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSaleFeature;
 
-/// <summary>
-/// Represents the response returned after user authentication
-/// </summary>
 public sealed class CreateSaleResponse
 {
-    /// <summary>
-    /// Gets or sets the JWT token for authenticated user
-    /// </summary>
-    public string Token { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the user's email address
-    /// </summary>
-    public string Email { get; set; } = string.Empty;   
-
-    /// <summary>
-    /// Gets or sets the user's full name
-    /// </summary>
-    public string Name { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the user's role in the system
-    /// </summary>
-    public string Role { get; set; } = string.Empty;
+    public Guid Id { get; set; }
+    public DateTime SaleDate { get; set; }
+    public int SaleNumber { get; set; }
+    public string CustomerName { get; set; } = string.Empty;
+    public decimal TotalValue { get; set; }
+    public string BranchName { get; set; } = string.Empty;
+    public bool IsCancelled { get; set; }
+    public List<CreateSaleItemResponse> Items { get; set; } = [];
 }
+
+public class CreateSaleItemResponse
+{
+    public Guid Id { get; set; }
+    public Guid ProductId { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+    public int Quantity { get; set; }
+    public decimal UnitPrice { get; set; }
+    public decimal TotalValue { get; set; }
+}
+

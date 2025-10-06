@@ -3,4 +3,21 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.CreateSale;
 public class CreateSaleResult
 {
     public Guid Id { get; set; }
+    public DateTime SaleDate { get; set; }
+    public int SaleNumber { get; set; }
+    public string CustomerName { get; set; } = string.Empty;
+    public decimal TotalValue { get; set; }
+    public string BranchName { get; set; } = string.Empty;
+    public bool IsCancelled { get; set; }
+    public List<CreateSaleItemResult> Items { get; set; } = [];
+}
+
+public class CreateSaleItemResult
+{
+    public Guid Id { get; set; }
+    public Guid ProductId { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+    public int Quantity { get; set; }
+    public decimal UnitPrice { get; set; }
+    public decimal TotalValue { get; set; }
 }

@@ -10,5 +10,8 @@ public class UpdateSaleProfile : Profile
         CreateMap<UpdateSaleRequest, UpdateSaleCommand>();
         CreateMap<UpdateSaleItemRequest, UpdateSaleItemCommand>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id ?? Guid.Empty));
+
+        CreateMap<UpdateSaleResult, UpdateSaleResponse>();
+        CreateMap<UpdateSaleItemResult, UpdateSaleItemResponse>();
     }
 }

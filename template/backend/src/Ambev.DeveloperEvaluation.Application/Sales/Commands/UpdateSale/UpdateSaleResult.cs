@@ -4,6 +4,7 @@ public class UpdateSaleResult
 {
     public Guid Id { get; set; }
     public DateTime SaleDate { get; set; }
+    public int SaleNumber { get; set; }
     public string CustomerName { get; set; } = string.Empty;
     public decimal TotalValue { get; set; }
     public string BranchName { get; set; } = string.Empty;

@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSaleFeature;
 
-public class SaleItemRequestValidator : AbstractValidator<SaleItemRequest>
+public class SaleItemRequestValidator : AbstractValidator<CreateSaleItemRequest>
 {
     public SaleItemRequestValidator()
     {

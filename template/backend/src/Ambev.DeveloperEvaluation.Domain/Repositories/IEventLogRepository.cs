@@ -1,8 +1,9 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
 
-namespace Ambev.DeveloperEvaluation.Domain.Repositories;
-
-public interface IEventLogRepository
+namespace Ambev.DeveloperEvaluation.Domain.Repositories
 {
-    Task AddAsync(EventLog eventLog);
+    public interface IEventLogRepository
+    {
+        Task AddAsync(EventLog eventLog);
+    }
 }

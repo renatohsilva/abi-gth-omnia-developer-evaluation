@@ -8,6 +8,9 @@ public class CreateSaleProfile : Profile
 {
     public CreateSaleProfile()
     {
+        CreateMap<CreateSaleResult, CreateSaleResponse>();
+        CreateMap<CreateSaleItemResult, CreateSaleItemResponse>();
+
         CreateMap<CreateSaleRequest, CreateSaleCommand>();
         CreateMap<CreateSaleItemRequest, CreateSaleItemCommand>();
 

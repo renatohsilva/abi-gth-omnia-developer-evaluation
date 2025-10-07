@@ -9,7 +9,6 @@ using FluentValidation;
 using MediatR;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
-using System.Collections.Generic;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.Sales.Commands.UpdateSale;

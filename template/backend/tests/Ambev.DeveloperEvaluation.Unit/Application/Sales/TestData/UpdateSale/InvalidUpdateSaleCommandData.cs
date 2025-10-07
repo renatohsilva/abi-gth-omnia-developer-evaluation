@@ -44,5 +44,14 @@ public class InvalidUpdateSaleCommandData : TheoryData<UpdateSaleCommand>
             BranchName = "Valid Branch",
             Items = new List<UpdateSaleItemCommand> { new() { Id = Guid.NewGuid(), ProductId = Guid.NewGuid(), Quantity = 3, UnitPrice = 10, Discount = 0.1m } }
         });
+
+        // Scenario: Item with discount greater than 1
+        Add(new UpdateSaleCommand
+        {
+            Id = validId,
+            CustomerName = "Valid Customer",
+            BranchName = "Valid Branch",
+            Items = new List<UpdateSaleItemCommand> { new() { Id = Guid.NewGuid(), ProductId = Guid.NewGuid(), Quantity = 3, UnitPrice = 10, Discount = 1.1m } }
+        });
     }
 }

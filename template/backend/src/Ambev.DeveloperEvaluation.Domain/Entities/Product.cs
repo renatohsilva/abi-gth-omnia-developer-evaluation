@@ -1,10 +1,11 @@
 using Ambev.DeveloperEvaluation.Domain.Common;
 
-namespace Ambev.DeveloperEvaluation.Domain.Entities;
-
-public class Product : BaseEntity
+namespace Ambev.DeveloperEvaluation.Domain.Entities
 {
-    public string Name { get; set; } = string.Empty;
-    public decimal Price { get; set; }
-    public string Sku { get; set; } = string.Empty;
+    public class Product : BaseEntity
+    {
+        public string Name { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+        public string Sku { get; set; } = string.Empty;
+    }
 }

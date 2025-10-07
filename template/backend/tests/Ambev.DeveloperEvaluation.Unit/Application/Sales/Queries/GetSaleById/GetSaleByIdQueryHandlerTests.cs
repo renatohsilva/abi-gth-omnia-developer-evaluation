@@ -5,7 +5,6 @@ using AutoMapper;
 using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
-using System.Collections.Generic;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.Sales.Queries.GetSaleById;

@@ -1,4 +1,3 @@
-using Ambev.DeveloperEvaluation.Application.Users.GetUser;
 using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.Queries.GetSaleById;

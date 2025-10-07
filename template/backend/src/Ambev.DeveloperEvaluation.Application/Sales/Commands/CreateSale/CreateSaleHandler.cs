@@ -1,4 +1,3 @@
-using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
@@ -6,7 +5,6 @@ using Ambev.DeveloperEvaluation.Domain.Specifications;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.CreateSale;
 
@@ -64,6 +62,8 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleRe
         sale.TotalValue = sale.Items.Sum(i => i.TotalValue);
 
         var createdSale = await _saleRepository.CreateAsync(sale);
+
+        var result = _mapper.Map<CreateSaleResult>(createdSale);
 
         await _publisher.Publish(new SaleCreatedEvent(sale), cancellationToken);
 

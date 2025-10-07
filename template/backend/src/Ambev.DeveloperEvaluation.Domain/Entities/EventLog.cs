@@ -1,20 +1,21 @@
 using Ambev.DeveloperEvaluation.Domain.Common;
 
-namespace Ambev.DeveloperEvaluation.Domain.Entities;
-
-public class EventLog : BaseEntity
+namespace Ambev.DeveloperEvaluation.Domain.Entities
 {
-    public string EventType { get; private set; }
-    public string EventData { get; private set; }
-    public DateTime Timestamp { get; private set; }
-
-    public EventLog(string eventType, string eventData)
+    public class EventLog : BaseEntity
     {
-        EventType = eventType;
-        EventData = eventData;
-        Timestamp = DateTime.UtcNow;
-    }
+        public string EventType { get; private set; }
+        public string EventData { get; private set; }
+        public DateTime Timestamp { get; private set; }
 
-    // Required for EF Core
-    protected EventLog() { }
+        public EventLog(string eventType, string eventData)
+        {
+            EventType = eventType;
+            EventData = eventData;
+            Timestamp = DateTime.UtcNow;
+        }
+
+        // Required for EF Core
+        protected EventLog() { }
+    }
 }

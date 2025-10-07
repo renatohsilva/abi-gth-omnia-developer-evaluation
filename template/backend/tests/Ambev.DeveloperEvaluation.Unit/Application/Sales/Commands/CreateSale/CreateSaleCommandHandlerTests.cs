@@ -7,7 +7,6 @@ using FluentAssertions;
 using FluentValidation;
 using MediatR;
 using NSubstitute;
-using System.Collections.Generic;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.Sales.Commands.CreateSale;

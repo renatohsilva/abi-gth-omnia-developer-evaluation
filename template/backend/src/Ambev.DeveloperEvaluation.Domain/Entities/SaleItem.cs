@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Domain.Common;
+using System.Text.Json.Serialization;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
@@ -13,5 +14,6 @@ public class SaleItem : BaseEntity
     public bool IsCancelled { get; set; }
 
     public Guid SaleId { get; set; }
+    [JsonIgnore]
     public virtual Sale Sale { get; set; } = new Sale();
 }

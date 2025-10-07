@@ -111,11 +111,11 @@ public class SalesController : ControllerBase
         command.Id = id;
         var response = await _mediator.Send(command, cancellationToken);
     
-        return Ok(new ApiResponseWithData<CreateSaleResponse>
+        return Ok(new ApiResponseWithData<UpdateSaleResponse>
         {
             Success = true,
             Message = "Sale updated successfully",
-            Data = _mapper.Map<CreateSaleResponse>(response)
+            Data = _mapper.Map<UpdateSaleResponse>(response)
         });
     }
 

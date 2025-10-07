@@ -1,14 +1,11 @@
 using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.UpdateSale;
+namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.CreateSale;
 
-public class UpdateSaleValidator : AbstractValidator<UpdateSaleCommand>
+public class CreateSaleCommandValidator : AbstractValidator<CreateSaleCommand>
 {
-    public UpdateSaleValidator()
+    public CreateSaleCommandValidator()
     {
-        RuleFor(v => v.Id)
-            .NotEmpty().WithMessage("Sale ID is required.");
-
         RuleFor(v => v.CustomerName)
             .NotEmpty().WithMessage("Customer name is required.")
             .MaximumLength(100).WithMessage("Customer name must not exceed 100 characters.");
@@ -20,16 +17,14 @@ public class UpdateSaleValidator : AbstractValidator<UpdateSaleCommand>
         RuleFor(v => v.Items)
             .NotEmpty().WithMessage("Sale must have at least one item.");
 
-        RuleForEach(v => v.Items).SetValidator(new UpdateSaleItemValidator());
+        RuleForEach(v => v.Items).SetValidator(new CreateSaleItemValidator());
     }
 }
-public class UpdateSaleItemValidator : AbstractValidator<UpdateSaleItemCommand>
-{
-    public UpdateSaleItemValidator()
-    {
-        RuleFor(v => v.Id)
-            .NotEmpty().WithMessage("Sale Item ID is required.");
 
+public class CreateSaleItemValidator : AbstractValidator<CreateSaleItemCommand>
+{
+    public CreateSaleItemValidator()
+    {
         RuleFor(i => i.ProductId)
             .NotEmpty().WithMessage("Product ID is required.");
 
@@ -46,7 +41,7 @@ public class UpdateSaleItemValidator : AbstractValidator<UpdateSaleItemCommand>
             .WithMessage("Discount is not allowed for quantities less than 4.");
     }
 
-    private bool Be_zero_if_quantity_is_less_than_4(UpdateSaleItemCommand item, decimal discount)
+    private bool Be_zero_if_quantity_is_less_than_4(CreateSaleItemCommand item, decimal discount)
     {
         if (item.Quantity < 4)
         {
@@ -55,4 +50,3 @@ public class UpdateSaleItemValidator : AbstractValidator<UpdateSaleItemCommand>
         return true;
     }
 }
-

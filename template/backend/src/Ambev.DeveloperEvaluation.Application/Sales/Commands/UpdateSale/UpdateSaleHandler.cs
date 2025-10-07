@@ -1,10 +1,13 @@
+using Ambev.DeveloperEvaluation.Application.Sales.Commands.CreateSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
 using AutoMapper;
+using FluentValidation;
 using MediatR;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.UpdateSale;
 
@@ -23,19 +26,25 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
         _discountSpecification = new DiscountSpecification();
     }
 
-    public async Task<UpdateSaleResult> Handle(UpdateSaleCommand request, CancellationToken cancellationToken)
+    public async Task<UpdateSaleResult> Handle(UpdateSaleCommand command, CancellationToken cancellationToken)
     {
-        var sale = await _saleRepository.GetByIdAsync(request.Id);
+        var validator = new UpdateSaleCommandValidator();
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+
+        if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
+
+        var sale = await _saleRepository.GetByIdAsync(command.Id);
         
         if (sale == null)
-            throw new NotFoundException(nameof(Sale), request.Id);
+            throw new NotFoundException(nameof(Sale), command.Id);
 
-        sale.SaleNumber = request.SaleNumber;
-        sale.CustomerName = request.CustomerName;
-        sale.BranchName = request.BranchName;
+        sale.SaleNumber = command.SaleNumber;
+        sale.CustomerName = command.CustomerName;
+        sale.BranchName = command.BranchName;
 
         var itemsToRemove = sale.Items
-           .Where(i => !request.Items.Any(dto => dto.Id == i.Id))
+           .Where(i => !command.Items.Any(dto => dto.Id == i.Id))
            .ToList();
 
         foreach (var item in itemsToRemove)
@@ -43,7 +52,7 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
             sale.Items.Remove(item);
         }
 
-        foreach (var itemDto in request.Items)
+        foreach (var itemDto in command.Items)
         {
             var existingItem = sale.Items.FirstOrDefault(i => i.Id == itemDto.Id);
 

@@ -1,9 +1,12 @@
+using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
 using AutoMapper;
+using FluentValidation;
 using MediatR;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.CreateSale;
 
@@ -25,18 +28,24 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleRe
         _discountSpecification = new DiscountSpecification();
     }
 
-    public async Task<CreateSaleResult> Handle(CreateSaleCommand request, CancellationToken cancellationToken)
+    public async Task<CreateSaleResult> Handle(CreateSaleCommand command, CancellationToken cancellationToken)
     {
+        var validator = new CreateSaleCommandValidator();
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+
+         if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
+
         var sale = new Sale
         {
-            SaleNumber = request.SaleNumber,
-            CustomerName = request.CustomerName,
-            BranchName = request.BranchName,
+            SaleNumber = command.SaleNumber,
+            CustomerName = command.CustomerName,
+            BranchName = command.BranchName,
             SaleDate = DateTime.UtcNow,
             IsCancelled = false
         };
 
-        foreach (var itemDto in request.Items)
+        foreach (var itemDto in command.Items)
         {
             var saleItem = new SaleItem
             {

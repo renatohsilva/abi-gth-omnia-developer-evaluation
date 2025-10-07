@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Application.Sales.Commands.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.Commands.UpdateSale;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.Sales.TestData.CreateSale;
